@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <title>产品首页</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f4f6f8;
+      color: #1f2d3d;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    .page {
+      max-width: 750px;
+      margin: 0 auto;
+      padding-bottom: 24px;
+    }
+
+    /* 顶部搜索区域 */
+    .search-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #f2f6fc;
+      color: #337ecc;
+      border: 1px solid #dbe9ff;
+      border-radius: 20px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .btn-category .caret {
+      font-size: 10px;
+      transform: translateY(-1px);
+    }
+
+    .search-input {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      border: 2px solid #e3f0ff;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .search-input input {
+      flex: 1;
+      border: 0;
+      outline: none;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .btn-search {
+      width: 44px;
+      height: 36px;
+      margin-right: 4px;
+      border: 0;
+      border-radius: 18px;
+      background: #409eff;
+      color: #fff;
+      font-size: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* 横幅 */
+    .banner {
+      padding: 12px;
+    }
+
+    .banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* 分区标题 */
+    .section {
+      padding: 0 12px;
+    }
+
+    .section-title {
+      margin: 8px 0 12px;
+      padding: 10px 16px;
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #9ad5ff 0%, #5db7ff 50%, #7cc0ff 100%);
+      box-shadow: 0 6px 14px rgba(93, 183, 255, 0.25);
+    }
+
+    /* 卡片与网格 */
+    .cards {
+      background: #e6f3ff;
+      border: 2px solid #cbe7ff;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      display: block;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card .caption {
+      padding: 10px 8px 12px;
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+    }
+
+    /* 2x2 商品宫格 */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 18px;
+    }
+
+    .grid .good {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .grid .good img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .pill {
+      margin: 10px auto 0;
+      display: inline-block;
+      max-width: 100%;
+      padding: 8px 14px;
+      border-radius: 22px;
+      background: #f07c36;
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(240, 124, 54, 0.3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* CTA */
+    .cta {
+      display: flex;
+      justify-content: center;
+      padding: 18px 0 8px;
+    }
+
+    /* 小屏优化 */
+    @media (max-width: 360px) {
+      .card img {
+        height: 140px;
+      }
+
+      .grid .good img {
+        height: 130px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <header class="search-bar">
+    <button class="btn-category" type="button">分类 <span class="caret">▼</span></button>
+    <div class="search-input">
+      <input type="search" placeholder="请输入关键词搜索"/>
+      <button class="btn-search" type="button">🔍</button>
+    </div>
+  </header>
+
+  <section class="banner">
+    <img src="../assets/images/login-background.jpg" alt="促销横幅"/>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">丨丨 恒都牛肉 丨丨</h2>
+    <div class="cards">
+      <div class="two-col">
+        <a href="#" class="card">
+          <img src="../assets/images/profile.jpg" alt="牛肉1"/>
+          <div class="caption">恒都京东自营旗舰店</div>
+        </a>
+        <a href="#" class="card">
+          <img src="../assets/images/pay.png" alt="牛肉2"/>
+          <div class="caption">精选西冷家庭装</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">丨丨 丰都麻辣鸡 丨丨</h2>
+    <div class="grid" style="padding: 0 6px;">
+      <div class="good">
+        <img src="../assets/images/profile.jpg" alt="麻辣鸡1"/>
+        <div class="pill">叁石哥丰都麻辣鸡</div>
+      </div>
+      <div class="good">
+        <img src="../assets/images/pay.png" alt="麻辣鸡2"/>
+        <div class="pill">源小幺丰都麻辣鸡工坊</div>
+      </div>
+      <div class="good">
+        <img src="../assets/images/pay.png" alt="麻辣鸡3"/>
+        <div class="pill">抓卤记丰都麻辣鸡</div>
+      </div>
+      <div class="good">
+        <img src="../assets/images/profile.jpg" alt="麻辣鸡4"/>
+        <div class="pill">华明孙记食品旗舰店</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">丨丨 乡茹榨菜 丨丨</h2>
+    <div class="cards">
+      <div class="two-col">
+        <a href="#" class="card">
+          <img src="../assets/images/profile.jpg" alt="榨菜1"/>
+        </a>
+        <a href="#" class="card">
+          <img src="../assets/images/pay.png" alt="榨菜2"/>
+        </a>
+      </div>
+    </div>
+    <div class="cta"><span class="pill">乡茹榨菜</span></div>
+  </section>
+</div>
+
+<script>
+  // 仅示例：类目按钮点击时切换文案
+  (function () {
+    var btn = document.querySelector('.btn-category');
+    if (!btn) return;
+    var toggled = false;
+    btn.addEventListener('click', function () {
+      toggled = !toggled;
+      btn.style.background = toggled ? '#e9f5ff' : '#f2f6fc';
+    });
+  })();
+</script>
+</body>
+</html>
