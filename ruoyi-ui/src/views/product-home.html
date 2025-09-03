@@ -41,24 +41,26 @@
       align-items: center;
       gap: 6px;
       padding: 8px 12px;
-      background: #f2f6fc;
-      color: #337ecc;
-      border: 1px solid #dbe9ff;
+      background: #fff;
+      color: #757575;
+      border: 1px solid #539ED3;
       border-radius: 20px;
       font-size: 14px;
       white-space: nowrap;
     }
 
-    .btn-category .caret {
-      font-size: 10px;
-      transform: translateY(-1px);
+    .btn-category img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
     }
+
 
     .search-input {
       flex: 1;
       display: flex;
       align-items: center;
-      border: 2px solid #e3f0ff;
+      border: 1px solid #539ED3;
       border-radius: 24px;
       overflow: hidden;
       background: #fff;
@@ -73,12 +75,11 @@
     }
 
     .btn-search {
-      width: 44px;
+      width: 54px;
       height: 36px;
-      margin-right: 4px;
       border: 0;
       border-radius: 18px;
-      background: #409eff;
+      background: #4396CF;
       color: #fff;
       font-size: 16px;
       display: inline-flex;
@@ -87,16 +88,100 @@
       cursor: pointer;
     }
 
+    .btn-search img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
     /* 横幅 */
     .banner {
       padding: 12px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .banner img {
+    .banner-container {
+      position: relative;
       width: 100%;
-      height: auto;
-      display: block;
+      height: 0;
+      padding-bottom: 40%; /* 高度比例，可根据需要调整 */
+    }
+
+    .banner-slides {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .banner-slide {
+      min-width: 100%;
+      height: 100%;
+    }
+
+    .banner-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       border-radius: 16px;
+      display: block;
+    }
+
+    .banner-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .banner-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .banner-dot.active {
+      background: #fff;
+    }
+
+    .banner-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2;
+      transition: background 0.3s;
+    }
+
+    .banner-nav:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .banner-nav.prev {
+      left: 10px;
+    }
+
+    .banner-nav.next {
+      right: 10px;
     }
 
     /* 分区标题 */
@@ -112,17 +197,15 @@
       font-weight: 700;
       letter-spacing: 2px;
       border-radius: 10px;
-      background: linear-gradient(90deg, #9ad5ff 0%, #5db7ff 50%, #7cc0ff 100%);
+      background: linear-gradient(90deg, #ACDDEF 0%, #4397D0 50%, #ACDDEF 100%);
       box-shadow: 0 6px 14px rgba(93, 183, 255, 0.25);
+      font-size: 20px;
     }
 
     /* 卡片与网格 */
     .cards {
-      background: #e6f3ff;
-      border: 2px solid #cbe7ff;
-      border-radius: 14px;
+      background: url("../assets/images/背景@2x.png");
       padding: 14px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 
     .two-col {
@@ -215,27 +298,50 @@
 <body>
 <div class="page">
   <header class="search-bar">
-    <button class="btn-category" type="button">分类 <span class="caret">▼</span></button>
+    <button class="btn-category" type="button">
+      分类 <img src="../assets/images/下拉@2x.png" alt="下拉"/>
+    </button>
     <div class="search-input">
       <input type="search" placeholder="请输入关键词搜索"/>
-      <button class="btn-search" type="button">🔍</button>
+      <button class="btn-search" type="button">
+        <img src="../assets/images/搜索@2x.png" alt="搜索"/>
+      </button>
     </div>
   </header>
 
   <section class="banner">
-    <img src="../assets/images/login-background.jpg" alt="促销横幅"/>
+    <div class="banner-container">
+      <div class="banner-slides" id="bannerSlides">
+        <div class="banner-slide">
+          <img src="../assets/images/banner@2x.png" alt="促销横幅1"/>
+        </div>
+        <div class="banner-slide">
+          <img src="../assets/images/banner@2x.png" alt="促销横幅2"/>
+        </div>
+        <div class="banner-slide">
+          <img src="../assets/images/banner@2x.png" alt="促销横幅3"/>
+        </div>
+      </div>
+
+      <div class="banner-nav prev" id="prevBtn">&lt;</div>
+      <div class="banner-nav next" id="nextBtn">&gt;</div>
+
+      <div class="banner-dots" id="bannerDots">
+        <!-- Dots will be generated by JavaScript -->
+      </div>
+    </div>
   </section>
 
   <section class="section">
-    <h2 class="section-title">丨丨 恒都牛肉 丨丨</h2>
+    <h2 class="section-title">恒都牛肉</h2>
     <div class="cards">
       <div class="two-col">
         <a href="#" class="card">
-          <img src="../assets/images/profile.jpg" alt="牛肉1"/>
+          <img src="../assets/images/test.png" alt="牛肉1"/>
           <div class="caption">恒都京东自营旗舰店</div>
         </a>
         <a href="#" class="card">
-          <img src="../assets/images/pay.png" alt="牛肉2"/>
+          <img src="../assets/images/test.png" alt="牛肉2"/>
           <div class="caption">精选西冷家庭装</div>
         </a>
       </div>
@@ -243,36 +349,36 @@
   </section>
 
   <section class="section">
-    <h2 class="section-title">丨丨 丰都麻辣鸡 丨丨</h2>
+    <h2 class="section-title">丰都麻辣鸡</h2>
     <div class="grid" style="padding: 0 6px;">
       <div class="good">
-        <img src="../assets/images/profile.jpg" alt="麻辣鸡1"/>
+        <img src="../assets/images/test.png" alt="麻辣鸡1"/>
         <div class="pill">叁石哥丰都麻辣鸡</div>
       </div>
       <div class="good">
-        <img src="../assets/images/pay.png" alt="麻辣鸡2"/>
+        <img src="../assets/images/test.png" alt="麻辣鸡2"/>
         <div class="pill">源小幺丰都麻辣鸡工坊</div>
       </div>
       <div class="good">
-        <img src="../assets/images/pay.png" alt="麻辣鸡3"/>
+        <img src="../assets/images/test.png" alt="麻辣鸡3"/>
         <div class="pill">抓卤记丰都麻辣鸡</div>
       </div>
       <div class="good">
-        <img src="../assets/images/profile.jpg" alt="麻辣鸡4"/>
+        <img src="../assets/images/test.png" alt="麻辣鸡4"/>
         <div class="pill">华明孙记食品旗舰店</div>
       </div>
     </div>
   </section>
 
   <section class="section">
-    <h2 class="section-title">丨丨 乡茹榨菜 丨丨</h2>
+    <h2 class="section-title">乡茹榨菜</h2>
     <div class="cards">
       <div class="two-col">
         <a href="#" class="card">
-          <img src="../assets/images/profile.jpg" alt="榨菜1"/>
+          <img src="../assets/images/test.png" alt="榨菜1"/>
         </a>
         <a href="#" class="card">
-          <img src="../assets/images/pay.png" alt="榨菜2"/>
+          <img src="../assets/images/test.png" alt="榨菜2"/>
         </a>
       </div>
     </div>
@@ -281,6 +387,95 @@
 </div>
 
 <script>
+  // Banner轮播图功能实现
+  (function() {
+    const bannerSlides = document.getElementById('bannerSlides');
+    const slides = bannerSlides.querySelectorAll('.banner-slide');
+    const dotsContainer = document.getElementById('bannerDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let currentIndex = 0;
+    let slideCount = slides.length;
+    let autoSlideInterval;
+
+    // 创建指示点
+    function createDots() {
+      for (let i = 0; i < slideCount; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('banner-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.dataset.index = i;
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    // 更新指示点状态
+    function updateDots() {
+      const dots = dotsContainer.querySelectorAll('.banner-dot');
+      dots.forEach((dot, index) => {
+        if (index === currentIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    // 跳转到指定幻灯片
+    function goToSlide(index) {
+      currentIndex = index;
+      const translateX = -currentIndex * 100;
+      bannerSlides.style.transform = `translateX(${translateX}%)`;
+      updateDots();
+      resetAutoSlide();
+    }
+
+    // 下一张幻灯片
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slideCount;
+      goToSlide(currentIndex);
+    }
+
+    // 上一张幻灯片
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+      goToSlide(currentIndex);
+    }
+
+    // 自动轮播
+    function startAutoSlide() {
+      autoSlideInterval = setInterval(nextSlide, 3000); // 每3秒切换
+    }
+
+    // 重置自动轮播
+    function resetAutoSlide() {
+      clearInterval(autoSlideInterval);
+      startAutoSlide();
+    }
+
+    // 初始化
+    function init() {
+      createDots();
+      startAutoSlide();
+
+      // 绑定按钮事件
+      prevBtn.addEventListener('click', prevSlide);
+      nextBtn.addEventListener('click', nextSlide);
+
+      // 鼠标悬停时暂停自动播放
+      bannerSlides.addEventListener('mouseenter', () => {
+        clearInterval(autoSlideInterval);
+      });
+
+      bannerSlides.addEventListener('mouseleave', startAutoSlide);
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+
   // 仅示例：类目按钮点击时切换文案
   (function () {
     var btn = document.querySelector('.btn-category');

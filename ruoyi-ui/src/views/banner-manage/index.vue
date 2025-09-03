@@ -39,7 +39,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="bannerList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="编号" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
@@ -83,7 +82,7 @@
 
     <!-- 添加/编辑 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="90px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="banner图片" prop="image">
           <image-upload v-model="form.image" :limit="1" :fileSize="5" :isShowTip="false"/>
         </el-form-item>
@@ -96,7 +95,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序号" prop="orderNum">
-          <el-input-number v-model="form.orderNum" controls-position="right" :min="0"/>
+          <el-input-number v-model="form.orderNum" controls-position="right" :min="1"/>
         </el-form-item>
         <el-form-item label="站点名称" prop="siteName">
           <el-input v-model="form.siteName" placeholder="请输入站点名称"/>
@@ -153,7 +152,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      const img1 = require('@/assets/images/pay.png')
+      const img1 = require('@/assets/images/banner@2x.png')
       const all = [
         {
           id: 1,

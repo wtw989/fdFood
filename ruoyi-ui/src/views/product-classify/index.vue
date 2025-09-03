@@ -46,7 +46,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="classifyList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="编号" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
@@ -107,7 +106,7 @@
           <el-input v-model="form.name" placeholder="请输入分类名称"/>
         </el-form-item>
         <el-form-item label="排序" prop="orderNum">
-          <el-input-number v-model="form.orderNum" controls-position="right" :min="0"/>
+          <el-input-number v-model="form.orderNum" controls-position="right" :min="1"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">

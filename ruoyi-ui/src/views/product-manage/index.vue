@@ -43,7 +43,6 @@
     </el-row>
 
     <el-table v-loading="loading" :data="productList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="编号" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
@@ -58,15 +57,20 @@
       <el-table-column label="产品分类" prop="category" width="120"/>
       <el-table-column label="生效链接" width="240">
         <template slot-scope="scope">
+          <el-tag size="mini" type="danger" class="mr4">{{ scope.row.tag }}</el-tag>
           <span>{{ scope.row.link }}</span>
         </template>
       </el-table-column>
       <el-table-column label="其他平台" width="160">
         <template slot-scope="scope">
-          <el-tag v-for="p in scope.row.platforms" :key="p" size="mini" type="info" class="mr4">{{ p }}</el-tag>
+          <el-tag v-for="p in scope.row.platforms" :key="p" size="mini" class="mr4">{{ p }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="总点击数" prop="clicks" align="center" width="100"/>
+      <el-table-column label="总点击数" prop="clicks" align="center" width="100">
+        <template slot-scope="scope">
+          <el-link type="primary" :underline="false" @click="openClicksDialog(scope.row)">{{ scope.row.clicks }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="置顶" align="center" width="100">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.weightOn" @change="onWeightChange(scope.row)"/>
@@ -114,6 +118,22 @@
           </el-col>
         </el-row>
 
+        <el-row :gutter="16">
+          <el-col :span="14">
+            <el-form-item label="产品分类" prop="category">
+              <el-select v-model="form.category" placeholder="请选择产品分类" filterable>
+                <el-option v-for="c in categoryOptions" :key="c" :label="c" :value="c"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10" class="flex-center">
+            <el-form-item label="产品置顶" prop="pinned">
+              <el-switch v-model="form.pinned"/>
+              <div class="tip-text">置顶的产品将显示在列表最前面</div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-row :gutter="16" type="flex" align="middle">
           <el-col :span="14">
             <el-form-item label="前端布局展示" prop="layout">
@@ -121,7 +141,7 @@
                 <el-radio :label="'2*1'">2*1布局</el-radio>
                 <el-radio :label="'1*1'">1*1布局</el-radio>
               </el-radio-group>
-              <div class="tip-text mt6">2x1：独占一行显示两张图片；1x1：占一行一个位置显示一张图片</div>
+              <div class="tip-text">2x1：独占一行显示两张图片；1x1：占一行一个位置显示一张图片</div>
             </el-form-item>
           </el-col>
           <el-col :span="10">
@@ -156,14 +176,10 @@
                   <i class="el-icon-plus f20"/>
                 </div>
               </el-upload>
-              <div class="tip-text mt6">请上传图片大小为约400*400px的png,jpg,jpeg文件，大小在20M以内</div>
+              <div class="tip-text">请上传图片大小为约400*400px的png,jpg,jpeg文件，大小在20M以内</div>
             </el-form-item>
           </el-col>
-          <el-col :span="10" class="flex-center">
-            <el-form-item label="产品置顶" prop="pinned">
-              <el-switch v-model="form.pinned"/>
-            </el-form-item>
-          </el-col>
+
         </el-row>
 
         <el-divider>第三方平台配置</el-divider>
@@ -205,6 +221,47 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 点击数详情对话框 -->
+    <el-dialog :title="'统计详情'" :visible.sync="clicksDialogVisible" width="720px" append-to-body>
+      <div class="stat-header">
+        <div class="stat-title">{{ clicksProduct.name }}</div>
+        <div class="stat-total">总点击数：<span class="stat-total-num">{{ clicksTotal }}</span></div>
+        <div class="stat-filters">
+          <el-date-picker
+            v-model="clicksDateStart"
+            type="date"
+            size="small"
+            value-format="yyyy-MM-dd"
+            placeholder="开始日期"
+            class="mr8"
+          />
+          <span class="mr8">至</span>
+          <el-date-picker
+            v-model="clicksDateEnd"
+            type="date"
+            size="small"
+            value-format="yyyy-MM-dd"
+            placeholder="结束日期"
+            class="mr8"
+          />
+          <el-button size="small" @click="resetClicksFilters">重 置</el-button>
+        </div>
+      </div>
+
+      <el-table :data="clicksDisplayList" stripe size="mini" :default-sort="{prop: 'date', order: 'descending'}">
+        <el-table-column label="日期" prop="date" width="200" sortable/>
+        <el-table-column label="点击数" prop="count" align="left" sortable>
+          <template slot-scope="scope">
+            <el-link type="primary" :underline="false">{{ scope.row.count }}</el-link>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="clicksDialogVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -223,7 +280,7 @@ export default {
       productList: [],
       title: "",
       open: false,
-      layoutOptions: ['1*1', '2*1', '2*2', '3*1'],
+      layoutOptions: ['1*1', '2*1'],
       categoryOptions: ['恒都牛肉', '丰都麻辣鸡', '香菇梆菜'],
       platformOptions: ['京东', '抖音', '小红书', '小程序'],
       queryParams: {
@@ -238,8 +295,31 @@ export default {
       rules: {
         name: [{required: true, message: '产品名称不能为空', trigger: 'blur'}],
         category: [{required: true, message: '产品分类不能为空', trigger: 'change'}],
-        image: [{required: true, message: '产品图片不能为空', trigger: 'change'}]
+        image: [{required: true, message: '产品图片不能为空', trigger: 'change'}],
+      },
+      // 点击数弹窗相关
+      clicksDialogVisible: false,
+      clicksDetailList: [],
+      clicksProduct: {},
+      clicksTotal: 0,
+      clicksDateStart: undefined,
+      clicksDateEnd: undefined
+    }
+  },
+  computed: {
+    clicksDisplayList() {
+      // 过滤并按日期倒序
+      const start = this.clicksDateStart
+      const end = this.clicksDateEnd
+      const inRange = (d) => {
+        if (!start && !end) return true
+        if (start && d < start) return false
+        if (end && d > end) return false
+        return true
       }
+      return [...(this.clicksDetailList || [])]
+        .filter(i => inRange(i.date))
+        .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
     }
   },
   created() {
@@ -248,7 +328,7 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      const img = require('@/assets/images/pay.png')
+      const img = require('@/assets/images/test.png')
       const all = [
         {
           id: 1,
@@ -354,8 +434,7 @@ export default {
       this.$message && this.$message.info('导入功能待接入接口')
     },
     onWeightChange(row) {
-      // 仅前端示例，切换权重开关不做持久化
-      this.$message && this.$message.success('权重已' + (row.weightOn ? '开启' : '关闭'))
+      this.$message && this.$message.success('置顶已' + (row.weightOn ? '开启' : '关闭'))
     },
     addPlatformRow() {
       if (!this.form.platformConfigs) this.$set(this.form, 'platformConfigs', [])
@@ -426,6 +505,44 @@ export default {
         this.open = false
         this.getList()
       })
+    },
+    openClicksDialog(row) {
+      this.clicksProduct = row
+      this.clicksDateStart = undefined
+      this.clicksDateEnd = undefined
+      const today = new Date()
+      const list = []
+      let sum = 0
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today)
+        d.setDate(today.getDate() - i)
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+        // 简单按总量分布生成演示数据
+        const base = Math.max(1, Math.round(row.clicks / 10))
+        const fluctuation = Math.floor(Math.random() * base)
+        const count = Math.max(0, base + (i % 2 === 0 ? fluctuation : -Math.floor(fluctuation / 2)))
+        list.push({ date: dateStr, count })
+        sum += count
+      }
+      // 归一化到接近总点击（演示）
+      if (sum > 0 && row.clicks) {
+        const factor = row.clicks / sum
+        let adjustedSum = 0
+        for (let j = 0; j < list.length; j++) {
+          list[j].count = Math.max(0, Math.round(list[j].count * factor))
+          adjustedSum += list[j].count
+        }
+        // 调整差值到最后一天
+        const diff = (row.clicks || 0) - adjustedSum
+        list[list.length - 1].count += diff
+      }
+      this.clicksDetailList = list
+      this.clicksTotal = list.reduce((acc, cur) => acc + cur.count, 0)
+      this.clicksDialogVisible = true
+    },
+    resetClicksFilters() {
+      this.clicksDateStart = undefined
+      this.clicksDateEnd = undefined
     }
   }
 }
@@ -531,6 +648,7 @@ export default {
 
 .tip-text {
   color: #999;
+  font-size: 12px;
 }
 
 .avatar {
@@ -553,5 +671,34 @@ export default {
 
 .f20 {
   font-size: 20px;
+}
+
+.el-link {
+  font-weight: 600;
+}
+
+.stat-header {
+  margin-bottom: 12px;
+}
+
+.stat-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.stat-total {
+  color: #606266;
+  margin-bottom: 8px;
+}
+
+.stat-total-num {
+  color: #409EFF;
+  font-weight: 700;
+}
+
+.stat-filters {
+  display: flex;
+  align-items: center;
 }
 </style>

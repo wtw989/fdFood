@@ -68,7 +68,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/product-classify/index'),
+        component: () => import('@/views/product-manage/index'),
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
@@ -87,6 +87,11 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/product-home',
+    component: () => import('@/views/product-home/index'),
+    hidden: true
   }
 ]
 
